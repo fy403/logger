@@ -3,6 +3,11 @@ package logger
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"os"
+	"time"
+
 	"github.com/BurntSushi/toml"
 	"github.com/getsentry/sentry-go"
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
@@ -10,10 +15,6 @@ import (
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 	"gopkg.in/yaml.v2"
-	"io"
-	"io/ioutil"
-	"os"
-	"time"
 )
 
 const (
