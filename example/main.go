@@ -4,8 +4,8 @@ import (
 	"errors"
 	"time"
 
+	baselogger "github.com/mae-pax/logger"
 	"github.com/spf13/pflag"
-	logger "github.com/mae-pax/logger"
 )
 
 var (
@@ -17,10 +17,10 @@ func init() {
 }
 
 func main() {
-	c := logger.New()
-	c.SetDivision("time")        // 设置归档方式，"time"时间归档 "size"文件大小归档，文件大小等可以在配置文件配置
-	c.SetTimeUnit(logger.Minute) // 时间归档 可以设置切割单位
-	c.SetEncoding("json")        // 输出格式 "json" 或者 "console"
+	c := baselogger.New()
+	c.SetDivision("time")            // 设置归档方式，"time"时间归档 "size"文件大小归档，文件大小等可以在配置文件配置
+	c.SetTimeUnit(baselogger.Minute) // 时间归档 可以设置切割单位
+	c.SetEncoding("json")            // 输出格式 "json" 或者 "console"
 	//c.Stacktrace = true
 
 	c.SetInfoFile("./logs/server.log")      // 设置info级别日志
@@ -36,12 +36,12 @@ func main() {
 	// 	},
 	// }
 
-	c.InitLogger()
+	logger := c.InitLogger()
 
 	logger.Info("info level test")
-	logger.Error("dsdadadad level test", logger.WithError(errors.New("sabhksasas")))
+	logger.Error("dsdadadad level test", baselogger.WithError(errors.New("sabhksasas")))
 	logger.Error("121212121212 error")
-	logger.Error("error message", logger.With("foo", "bar"))
+	logger.Error("error message", baselogger.With("foo", "bar"))
 	logger.Warn("warn level test")
 	logger.Debug("debug level test")
 
@@ -52,6 +52,6 @@ func main() {
 	logger.Warnf("warn level test: %s", "111")
 	logger.Debugf("debug level test: %s", "111")
 
-	logger.Info("this is a log", logger.With("Trace", "12345677"))
-	logger.Info("this is a log", logger.WithError(errors.New("this is a new error")))
+	logger.Info("this is a log", baselogger.With("Trace", "12345677"))
+	logger.Info("this is a log", baselogger.WithError(errors.New("this is a new error")))
 }

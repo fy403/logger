@@ -17,17 +17,17 @@ const (
 func (t TimeUnit) Format() string {
 	switch t {
 	case Minute:
-		return ".%Y%m%d%H%M"
+		return ".%Y-%m-%d-%H-%M"
 	case Hour:
-		return ".%Y%m%d%H"
+		return ".%Y-%m-%d-%H"
 	case Day:
-		return ".%Y%m%d"
+		return ".%Y-%m-%d"
 	case Month:
-		return ".%Y%m"
+		return ".%Y-%m"
 	case Year:
 		return ".%Y"
 	default:
-		return ".%Y%m%d"
+		return ".%Y-%m-%d"
 	}
 }
 

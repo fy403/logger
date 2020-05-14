@@ -27,7 +27,6 @@ const (
 )
 
 var (
-	Logger                    *Log
 	_encoderNameToConstructor = map[string]func(zapcore.EncoderConfig) zapcore.Encoder{
 		"console": func(encoderConfig zapcore.EncoderConfig) zapcore.Encoder {
 			return zapcore.NewConsoleEncoder(encoderConfig)
@@ -257,8 +256,7 @@ func (c *LogOptions) InitLogger() *Log {
 		}))
 	}
 
-	Logger = &Log{logger}
-	return Logger
+	return &Log{logger}
 }
 
 func (c *LogOptions) sizeDivisionWriter(filename string) io.Writer {
@@ -285,49 +283,49 @@ func (c *LogOptions) timeDivisionWriter(filename string) io.Writer {
 	return hook
 }
 
-func Info(msg string, args ...zap.Field) {
-	Logger.L.Info(msg, args...)
+func (log *Log) Info(msg string, args ...zap.Field) {
+	log.L.Info(msg, args...)
 }
 
-func Error(msg string, args ...zap.Field) {
-	Logger.L.Error(msg, args...)
+func (log *Log) Error(msg string, args ...zap.Field) {
+	log.L.Error(msg, args...)
 }
 
-func Warn(msg string, args ...zap.Field) {
-	Logger.L.Warn(msg, args...)
+func (log *Log) Warn(msg string, args ...zap.Field) {
+	log.L.Warn(msg, args...)
 }
 
-func Debug(msg string, args ...zap.Field) {
-	Logger.L.Debug(msg, args...)
+func (log *Log) Debug(msg string, args ...zap.Field) {
+	log.L.Debug(msg, args...)
 }
 
-func Fatal(msg string, args ...zap.Field) {
-	Logger.L.Fatal(msg, args...)
+func (log *Log) Fatal(msg string, args ...zap.Field) {
+	log.L.Fatal(msg, args...)
 }
 
-func Infof(format string, args ...interface{}) {
+func (log *Log) Infof(format string, args ...interface{}) {
 	logMsg := fmt.Sprintf(format, args...)
-	Logger.L.Info(logMsg)
+	log.L.Info(logMsg)
 }
 
-func Errorf(format string, args ...interface{}) {
+func (log *Log) Errorf(format string, args ...interface{}) {
 	logMsg := fmt.Sprintf(format, args...)
-	Logger.L.Error(logMsg)
+	log.L.Error(logMsg)
 }
 
-func Warnf(format string, args ...interface{}) {
+func (log *Log) Warnf(format string, args ...interface{}) {
 	logMsg := fmt.Sprintf(format, args...)
-	Logger.L.Warn(logMsg)
+	log.L.Warn(logMsg)
 }
 
-func Debugf(format string, args ...interface{}) {
+func (log *Log) Debugf(format string, args ...interface{}) {
 	logMsg := fmt.Sprintf(format, args...)
-	Logger.L.Debug(logMsg)
+	log.L.Debug(logMsg)
 }
 
-func Fatalf(format string, args ...interface{}) {
+func (log *Log) Fatalf(format string, args ...interface{}) {
 	logMsg := fmt.Sprintf(format, args...)
-	Logger.L.Fatal(logMsg)
+	log.L.Fatal(logMsg)
 }
 
 func With(k string, v interface{}) zap.Field {
