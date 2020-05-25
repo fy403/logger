@@ -45,7 +45,7 @@ type LogOptions struct {
 	// Encoding sets the logger's encoding. Valid values are "json" and
 	// "console", as well as any third-party encodings registered via
 	// RegisterEncoder.
-	Encoding      string             `json:"encoding" yaml:"encoding" toml:"encoding"`
+	Encoding      string             `json:"encoding,omitempty" yaml:"encoding,omitempty" toml:"encoding,omitempty"`
 	InfoFilename  string             `json:"info_filename" yaml:"info_filename" toml:"info_filename"`
 	ErrorFilename string             `json:"error_filename" yaml:"error_filename" toml:"error_filename"`
 	MaxSize       int                `json:"max_size" yaml:"max_size" toml:"max_size"`
@@ -151,7 +151,7 @@ func (c *LogOptions) isOutput() bool {
 	return c.InfoFilename != ""
 }
 
-func (c *LogOptions) InitLogger() *Log {
+func (c *LogOptions) InitLogger(timeKey, levelKey string, customEncodeTime bool) *Log {
 	var (
 		logger             *zap.Logger
 		infoHook, warnHook io.Writer
@@ -164,16 +164,23 @@ func (c *LogOptions) InitLogger() *Log {
 	}
 	encoder := _encoderNameToConstructor[c.Encoding]
 
+	encodeTime := zapcore.ISO8601TimeEncoder
+	if customEncodeTime {
+		encodeTime = func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
+			enc.AppendString(t.Format("2006-01-02 15:04:05"))
+		}
+	}
+
 	encoderConfig := zapcore.EncoderConfig{
-		TimeKey:        "time",
-		LevelKey:       "level",
+		TimeKey:        timeKey,
+		LevelKey:       levelKey,
 		NameKey:        "logger",
 		CallerKey:      "file",
 		MessageKey:     "msg",
 		StacktraceKey:  "stacktrace",
 		LineEnding:     zapcore.DefaultLineEnding,
 		EncodeLevel:    zapcore.LowercaseLevelEncoder,
-		EncodeTime:     zapcore.ISO8601TimeEncoder,
+		EncodeTime:     encodeTime,
 		EncodeDuration: zapcore.SecondsDurationEncoder,
 		EncodeCaller:   zapcore.FullCallerEncoder,
 	}
