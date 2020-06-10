@@ -57,19 +57,26 @@ type LogOptions struct {
 	TimeUnit      TimeUnit           `json:"time_unit" yaml:"time_unit" toml:"time_unit"`
 	Stacktrace    bool               `json:"stacktrace" yaml:"stacktrace" toml:"stacktrace"`
 	SentryConfig  SentryLoggerConfig `json:"sentry_config" yaml:"sentry_config" toml:"sentry_config"`
+	Level         int8               `json:"level" yaml:"level" toml:"level"`
 	closeDisplay  int
 	caller        bool
 }
 
-func infoLevel() zap.LevelEnablerFunc {
+func infoLevel(level int8) zap.LevelEnablerFunc {
 	return zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-		return lvl < zapcore.WarnLevel
+		return lvl >= zapcore.Level(level) && lvl < zapcore.WarnLevel
 	})
 }
 
 func warnLevel() zap.LevelEnablerFunc {
 	return zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
 		return lvl >= zapcore.WarnLevel
+	})
+}
+
+func logLevel(level int8) zap.LevelEnablerFunc {
+	return zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+		return lvl >= zapcore.Level(level)
 	})
 }
 
@@ -217,13 +224,13 @@ func (c *LogOptions) InitLogger(timeKey, levelKey string, customEncodeTime bool)
 	if c.LevelSeparate {
 		cos = append(
 			cos,
-			zapcore.NewCore(encoder(encoderConfig), zapcore.NewMultiWriteSyncer(wsInfo...), infoLevel()),
+			zapcore.NewCore(encoder(encoderConfig), zapcore.NewMultiWriteSyncer(wsInfo...), infoLevel(c.Level)),
 			zapcore.NewCore(encoder(encoderConfig), zapcore.NewMultiWriteSyncer(wsWarn...), warnLevel()),
 		)
 	} else {
 		cos = append(
 			cos,
-			zapcore.NewCore(encoder(encoderConfig), zapcore.NewMultiWriteSyncer(wsInfo...), zap.InfoLevel),
+			zapcore.NewCore(encoder(encoderConfig), zapcore.NewMultiWriteSyncer(wsInfo...), logLevel(c.Level)),
 		)
 	}
 

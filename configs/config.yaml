@@ -1,12 +1,13 @@
 # log config
 # encoding: console
-info_filename: "./logs/server.log"
-error_filename: "./logs/server_err.log"
+# level: 0
+# info_filename: "./logs/server.log"
+# error_filename: "./logs/server_err.log"
 max_size: 10
 max_backups: 3
 max_age: 1
 compress: true
 division: "time"
-level_separate: true
-time_unit: "minute"
+# level_separate: true
+time_unit: "hour"
 stacktrace: false

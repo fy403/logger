@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"strconv"
 	"time"
 
@@ -38,14 +39,15 @@ func main() {
 	// }
 
 	c := baselogger.NewFromYaml(confPath)
-	logger := c.InitLogger("time", "", false)
+	// c.CloseConsoleDisplay()
+	logger := c.InitLogger("time", "level", false)
 
-	// logger.Info("info level test")
-	// logger.Error("dsdadadad level test", baselogger.WithError(errors.New("sabhksasas")))
-	// logger.Error("121212121212 error")
-	// logger.Error("error message", baselogger.With("foo", "bar"))
-	// logger.Warn("warn level test")
-	// logger.Debug("debug level test")
+	logger.Info("info level test")
+	logger.Error("dsdadadad level test", baselogger.WithError(errors.New("sabhksasas")))
+	logger.Error("121212121212 error")
+	logger.Error("error message", baselogger.With("foo", "bar"))
+	logger.Warn("warn level test")
+	logger.Debug("debug level test")
 
 	// // time.Sleep(1 * time.Minute) // 避免程序结束太快，没有上传sentry
 
@@ -57,9 +59,9 @@ func main() {
 	// logger.Info("this is a log", baselogger.With("Trace", "12345677"))
 	// logger.Info("this is a log", baselogger.WithError(errors.New("this is a new error")))
 
-	for i := 0; i < 100; i++ {
-		logger.Info(myLogMsg(strconv.Itoa(i)))
-	}
+	// for i := 0; i < 100; i++ {
+	// 	logger.Info(myLogMsg(strconv.Itoa(i)))
+	// }
 }
 
 func myLogMsg(i string) string {
