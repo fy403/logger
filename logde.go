@@ -60,6 +60,7 @@ type LogOptions struct {
 	Level         int8               `json:"level" yaml:"level" toml:"level"`
 	closeDisplay  int
 	caller        bool
+	skip          int
 }
 
 func infoLevel(level int8) zap.LevelEnablerFunc {
@@ -132,8 +133,9 @@ func (c *LogOptions) CloseConsoleDisplay() {
 	c.closeDisplay = 1
 }
 
-func (c *LogOptions) SetCaller(b bool) {
-	c.caller = b
+func (c *LogOptions) SetCaller(enable bool, skip int) {
+	c.caller = enable
+	c.skip = skip
 }
 
 func (c *LogOptions) SetTimeUnit(t TimeUnit) {
@@ -158,7 +160,7 @@ func (c *LogOptions) isOutput() bool {
 	return c.InfoFilename != ""
 }
 
-func (c *LogOptions) InitLogger(timeKey, levelKey string, customEncodeTime bool) *Log {
+func (c *LogOptions) InitLogger(timeKey, levelKey string, customEncodeTime, shortCaller bool) *Log {
 	var (
 		logger             *zap.Logger
 		infoHook, warnHook io.Writer
@@ -190,6 +192,9 @@ func (c *LogOptions) InitLogger(timeKey, levelKey string, customEncodeTime bool)
 		EncodeTime:     encodeTime,
 		EncodeDuration: zapcore.SecondsDurationEncoder,
 		EncodeCaller:   zapcore.FullCallerEncoder,
+	}
+	if shortCaller {
+		encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder
 	}
 
 	if c.closeDisplay == 0 {
@@ -241,7 +246,7 @@ func (c *LogOptions) InitLogger(timeKey, levelKey string, customEncodeTime bool)
 	}
 
 	if c.caller {
-		opts = append(opts, zap.AddCaller())
+		opts = append(opts, zap.AddCaller(), zap.AddCallerSkip(c.skip))
 	}
 
 	logger = zap.New(zapcore.NewTee(cos...), opts...)

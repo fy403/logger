@@ -40,7 +40,8 @@ func main() {
 
 	c := baselogger.NewFromYaml(confPath)
 	// c.CloseConsoleDisplay()
-	logger := c.InitLogger("time", "level", false)
+	c.SetCaller(true, 2)
+	logger := c.InitLogger("time", "level", false, true)
 
 	logger.Info("info level test")
 	logger.Error("dsdadadad level test", baselogger.WithError(errors.New("sabhksasas")))
