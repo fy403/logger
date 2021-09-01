@@ -58,7 +58,7 @@ type LogOptions struct {
 	Stacktrace    bool               `json:"stacktrace" yaml:"stacktrace" toml:"stacktrace"`
 	SentryConfig  SentryLoggerConfig `json:"sentry_config" yaml:"sentry_config" toml:"sentry_config"`
 	Level         int8               `json:"level" yaml:"level" toml:"level"`
-	closeDisplay  int
+	CloseDisplay  int                `json:"close_display" yaml:"close_display" toml:"close_display"`
 	caller        bool
 	skip          int
 }
@@ -130,7 +130,7 @@ func (c *LogOptions) SetDivision(division string) {
 }
 
 func (c *LogOptions) CloseConsoleDisplay() {
-	c.closeDisplay = 1
+	c.CloseDisplay = 1
 }
 
 func (c *LogOptions) SetCaller(enable bool, skip int) {
@@ -197,7 +197,7 @@ func (c *LogOptions) InitLogger(timeKey, levelKey string, customEncodeTime, shor
 		encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder
 	}
 
-	if c.closeDisplay == 0 {
+	if c.CloseDisplay == 0 {
 		wsInfo = append(wsInfo, zapcore.AddSync(os.Stdout))
 		wsWarn = append(wsWarn, zapcore.AddSync(os.Stdout))
 	}
